@@ -1,0 +1,84 @@
+plugins {
+    id 'com.google.cloud.tools.jib' version '3.1.4'
+    id 'org.springframework.boot' version '2.5.1'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+group = 'tfm'
+version = '1.0.0'
+sourceCompatibility = '11'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'junit:junit:4.13.2'
+
+    // https://mvnrepository.com/artifact/javax.servlet/jstl
+    implementation group: 'javax.servlet', name: 'jstl', version: '1.2'
+
+    // SPRING
+    implementation('org.springframework.boot:spring-boot-starter-web:2.6.2') {
+        exclude module: "spring-boot-starter-tomcat"
+    }
+    // https://mvnrepository.com/artifact/org.springframework/spring-web
+    implementation group: 'org.springframework', name: 'spring-web', version: '5.3.9'
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-undertow
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-undertow', version: '2.5.3'
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
+    implementation 'org.springframework.boot:spring-boot-starter:2.6.1'
+
+    // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.2'
+
+    // MIS DEPENDENCIAS
+
+    // https://mvnrepository.com/artifact/com.dslplatform/dsl-json-processor
+    implementation group: 'com.dslplatform', name: 'dsl-json-processor', version: '1.9.8'
+
+    // https://mvnrepository.com/artifact/com.dslplatform/dsl-json-java8
+    implementation group: 'com.dslplatform', name: 'dsl-json-java8', version: '1.9.8'
+
+    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.27'
+
+    // https://mvnrepository.com/artifact/com.google.cloud.sql/mysql-socket-factory-connector-j-8
+    implementation group: 'com.google.cloud.sql', name: 'mysql-socket-factory-connector-j-8', version: '1.4.2'
+
+    // https://mvnrepository.com/artifact/com.zaxxer/HikariCP
+    implementation group: 'com.zaxxer', name: 'HikariCP', version: '5.0.0'
+
+    // https://mvnrepository.com/artifact/com.auth0/java-jwt
+    implementation group: 'com.auth0', name: 'java-jwt', version: '3.18.1'
+
+    // https://mvnrepository.com/artifact/com.google.guava/guava
+    implementation group: 'com.google.guava', name: 'guava', version: '30.1.1-jre'
+
+    // https://mvnrepository.com/artifact/com.hubspot.jinjava/jinjava
+    implementation group: 'com.hubspot.jinjava', name: 'jinjava', version: '2.5.9'
+
+    // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.1'
+
+    // https://mvnrepository.com/artifact/com.sun.mail/javax.mail
+    implementation group: 'com.sun.mail', name: 'javax.mail', version: '1.6.2'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+jib {
+    from.image = 'adoptopenjdk/openjdk15:alpine-jre'
+    to.image = 'gcr.io/tfm/back:20220118'
+
+    container.jvmFlags = ['-XX:+TieredCompilation', '-XX:TieredStopAtLevel=1', '-Xss256k']
+
+    container {
+        ports = ['8080']
+    }
+}

@@ -1,0 +1,10 @@
+.idea/
+*.iml
+*.iws
+.build/
+target/
+.sonar/
+.sonarlint/
+deploy.sh
+docker-compose.yml
+Dockerfile
