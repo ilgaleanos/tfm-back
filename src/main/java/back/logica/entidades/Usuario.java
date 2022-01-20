@@ -1,9 +1,11 @@
 package back.logica.entidades;
 
 import com.dslplatform.json.CompiledJson;
+import com.dslplatform.json.JsonAttribute;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 @Component
 @CompiledJson
@@ -11,7 +13,6 @@ public class Usuario {
 
     private int id;
     private String uuid;
-    private String telefono = "";
     private String correo = "";
     private String nombre = "";
     private String apellido = "";
@@ -49,15 +50,8 @@ public class Usuario {
     }
 
     public void setCorreo(String correo) {
-        this.correo = correo;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
+        Objects.requireNonNull(correo);
+        this.correo = correo.toLowerCase();
     }
 
     public String getNombre() {

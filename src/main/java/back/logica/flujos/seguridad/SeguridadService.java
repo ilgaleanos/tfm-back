@@ -28,7 +28,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -38,9 +38,12 @@ import java.security.SecureRandom;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Calendar;
+import java.util.Date;
 
-@Component
+@Service
 public class SeguridadService {
 
     private final static Logger logger = LoggerFactory.getLogger(SeguridadService.class);
@@ -169,18 +172,12 @@ public class SeguridadService {
 
             if (tokenDecoded != null) {
 
-                Map<String, Object> permisos = tokenDecoded.getClaim("P").asMap();
-                String permisoStr = String.valueOf(permiso.getValue());
+                if (permiso.equals(Permiso.ABIERTO) && alcance.equals(PermisoAlcance.ABIERTO)) {
+                    return tokenDecoded;
+                }
 
-                if (
-                        permiso.equals(Permiso.ABIERTO) || (
-                                permisos.containsKey(permisoStr) &&
-                                        (((Integer) permisos.get(permisoStr)) % alcance.getValue()) == 0
-                        )
-                ) {
-                    if (sdb.existeToken(tokenDecoded.getClaim("uuid").asString(), permiso, alcance) == 1) {
-                        return tokenDecoded;
-                    }
+                if (sdb.existeToken(tokenDecoded.getClaim("uuid").asString(), permiso, alcance) == 1) {
+                    return tokenDecoded;
                 }
             }
 

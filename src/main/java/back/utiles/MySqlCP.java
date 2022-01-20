@@ -49,10 +49,12 @@ public class MySqlCP {
         config.addDataSourceProperty("trustServerCertificate", "true");
         config.addDataSourceProperty("useOldAliasMetadataBehavior", "yes");
 
-        config.addDataSourceProperty("useSSL", "true");
-        config.addDataSourceProperty("socketFactory", "com.google.cloud.sql.mysql.SocketFactory");
-        config.addDataSourceProperty("cloudSqlInstance", Env.AUTH_MYSQL_CLOUD_SQL_CONNECTION_NAME);
-        config.addDataSourceProperty("enableIamAuth", "true");
+//        config.addDataSourceProperty("useSSL", "true");
+//        config.addDataSourceProperty("socketFactory", "com.google.cloud.sql.mysql.SocketFactory");
+//        config.addDataSourceProperty("cloudSqlInstance", Env.AUTH_MYSQL_CLOUD_SQL_CONNECTION_NAME);
+//        config.addDataSourceProperty("enableIamAuth", "true");
+//        config.addDataSourceProperty("characterEncoding", "UTF-8");
+//        config.addDataSourceProperty("connectionCollation", "utf8mb4_bin");
 
         config.setJdbcUrl(Env.AUTH_MYSQL_JDBCURL);
         config.setUsername(Env.AUTH_MYSQL_USERNAME);

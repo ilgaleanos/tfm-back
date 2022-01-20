@@ -17,8 +17,8 @@ public class SeguridadDB extends DBCoreService {
      * Verificamos la existencia del token en la base de datos
      *
      * @param uuid    clave de ingreso temporal del usuario
-     * @param permiso al que quiere acceder el usuario
-     * @param alcance al que dispone
+     * @param permiso al recurso que se está accediendo
+     * @param alcance al que se quiere acceder
      */
     public int existeToken(final String uuid, Permiso permiso, PermisoAlcance alcance) throws SQLException {
         Object[] parametros = new Object[]{uuid, permiso.getValue(), alcance.getValue()};

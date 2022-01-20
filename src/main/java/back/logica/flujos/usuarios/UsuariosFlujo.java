@@ -22,20 +22,20 @@ public class UsuariosFlujo {
     }
 
 
-    public HashMap<String, Object> obtenerUsuario(int id) throws SQLException {
-        return usuariosDB.obtenerUsuario(id);
+    public HashMap<String, Object> obtenerUsuario(int id, String uuid) throws SQLException {
+        return usuariosDB.obtenerUsuario(id, uuid);
     }
 
-    public ArrayList<HashMap<String, Object>> obtenerUsuarios() throws SQLException {
-        return usuariosDB.obtenerUsuarios();
+    public ArrayList<HashMap<String, Object>> obtenerUsuarios(String uuid) throws SQLException {
+        return usuariosDB.obtenerUsuarios(uuid);
     }
 
-    public int crear(String correo, String nombre, String apellido, String telefono, int documento_tipo, String documento) throws SQLException {
-        return usuariosDB.crear(correo, nombre, apellido, telefono, documento_tipo, documento);
+    public int crear(String correo, String nombre, String apellido, String uuid) throws SQLException {
+        return usuariosDB.crear(correo, nombre, apellido, uuid);
     }
 
-    public int actualizar(String correo, String nombre, String apellido, String telefono, int documento_tipo, String documento, int id) throws SQLException {
-        return usuariosDB.actualizar(correo, nombre, apellido, telefono, documento_tipo, documento, id);
+    public int actualizar(String correo, String nombre, String apellido, String uuid, int id) throws SQLException {
+        return usuariosDB.actualizar(correo, nombre, apellido, uuid, id);
     }
 
     public int eliminar(int id, String uuid) throws SQLException {

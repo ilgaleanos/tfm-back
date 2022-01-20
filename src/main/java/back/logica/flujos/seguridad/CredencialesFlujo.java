@@ -1,34 +1,34 @@
 package back.logica.flujos.seguridad;
 
-import back.logica.basededatos.seguridad.UsuarioDB;
+import back.logica.basededatos.seguridad.CredencialesDB;
 import back.logica.entidades.Usuario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.UUID;
 
 
-@Component
+@Service
 public class CredencialesFlujo {
 
     private final static Logger logger = LoggerFactory.getLogger(CredencialesFlujo.class);
     private final SeguridadService seguridadService;
-    private final UsuarioDB usuarioDB;
+    private final CredencialesDB credencialesDB;
     private final Captcha recaptcha;
 
     @Autowired
     public CredencialesFlujo(
             SeguridadService seguridadService,
-            UsuarioDB usuarioDB,
+            CredencialesDB credencialesDB,
             Captcha recaptcha
     ) {
         this.recaptcha = recaptcha;
         this.seguridadService = seguridadService;
-        this.usuarioDB = usuarioDB;
+        this.credencialesDB = credencialesDB;
     }
 
 
@@ -39,12 +39,12 @@ public class CredencialesFlujo {
      * @return token generado o nulo en caso de fallo de autenticación
      */
     public String generarOTP(String telefono, String correo, String captcha) throws SQLException {
-        if (recaptcha.verificarInvalido(captcha)) {
+        if (recaptcha.verificarInvalido(captcha, 0.7)) {
             return null;
         }
         String otp = seguridadService.generateOTPSeguro(7);
         String uuid = UUID.randomUUID().toString();
-        int esCorreo = usuarioDB.insertarOtpUsuario(telefono, correo, uuid, otp);
+        int esCorreo = credencialesDB.insertarOtpUsuario(telefono, correo, uuid, otp);
         if (esCorreo == 999) {
             return null;
         }
@@ -68,11 +68,11 @@ public class CredencialesFlujo {
      * @return token generado o nulo en caso de fallo de autenticación
      */
     public Usuario ingresar(String uuid, String otp, String captcha) throws SQLException {
-        if (recaptcha.verificarInvalido(captcha)) {
+        if (recaptcha.verificarInvalido(captcha, 0.7)) {
             return null;
         }
 
-        Usuario usuario = usuarioDB.obtenerUsuarioIdentificadorUuidOtp(uuid, otp);
+        Usuario usuario = credencialesDB.obtenerUsuarioIdentificadorUuidOtp(uuid, otp);
         if (usuario == null) {
             return null;
         }
@@ -81,5 +81,10 @@ public class CredencialesFlujo {
         usuario.setToken(seguridadService.generarToken(usuario, Calendar.HOUR));
 
         return usuario;
+    }
+
+
+    public int eliminarToken(String uuid) throws SQLException {
+        return credencialesDB.eliminarToken(uuid);
     }
 }

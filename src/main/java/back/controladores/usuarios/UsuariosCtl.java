@@ -52,10 +52,15 @@ public class UsuariosCtl {
         HashMap<String, Object> response = new HashMap<>(1);
         try {
             if (id.isPresent()) {
-                HashMap<String, Object> usuario = usuariosFlujo.obtenerUsuario(id.get());
+                HashMap<String, Object> usuario = usuariosFlujo.obtenerUsuario(
+                        id.get(),
+                        decodedJWT.getClaim("uuid").asString()
+                );
                 response.put("usuario", usuario);
             } else {
-                ArrayList<HashMap<String, Object>> usuarios = usuariosFlujo.obtenerUsuarios();
+                ArrayList<HashMap<String, Object>> usuarios = usuariosFlujo.obtenerUsuarios(
+                        decodedJWT.getClaim("uuid").asString()
+                );
                 response.put("usuarios", usuarios);
             }
         } catch (Exception throwables) {
@@ -94,9 +99,7 @@ public class UsuariosCtl {
                     body.getCorreo(),
                     body.getNombre(),
                     body.getApellido(),
-                    body.getTelefono(),
-                    body.getDocumento_tipo(),
-                    body.getDocumento()
+                    decodedJWT.getClaim("uuid").asString()
             );
             response.put("id", id);
         } catch (Exception throwables) {
@@ -134,9 +137,7 @@ public class UsuariosCtl {
                     body.getCorreo(),
                     body.getNombre(),
                     body.getApellido(),
-                    body.getTelefono(),
-                    body.getDocumento_tipo(),
-                    body.getDocumento(),
+                    decodedJWT.getClaim("uuid").asString(),
                     body.getId()
             );
             response.put("id", id);

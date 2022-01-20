@@ -15,12 +15,15 @@
  */
 package back.controladores.seguridad;
 
+import back.logica.entidades.Permiso;
+import back.logica.entidades.PermisoAlcance;
 import back.logica.entidades.Usuario;
 import back.logica.flujos.seguridad.CredencialesFlujo;
 import back.logica.flujos.seguridad.SeguridadService;
 import back.logica.io.seguridad.CredencialesIn;
 import back.utiles.Env;
 import back.utiles.FrameworkService;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import io.undertow.util.StatusCodes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -66,7 +69,7 @@ public class CredencialesCtrl extends HttpServlet {
             consumes = "application/json"
     )
     public void generarOTP(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        CredencialesIn.GenerarOTP body = fw.getBody(req, CredencialesIn.GenerarOTP.class);
+        CredencialesIn.CredencialesGenerarOTP body = fw.getBody(req, CredencialesIn.CredencialesGenerarOTP.class);
         if (body == null || body.esInValido()) {
             fw.sendBadRequestJSON(resp, body);
             return;
@@ -98,7 +101,7 @@ public class CredencialesCtrl extends HttpServlet {
             consumes = "application/json"
     )
     public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        CredencialesIn.GenerarToken body = fw.getBody(req, CredencialesIn.GenerarToken.class);
+        CredencialesIn.CredencialesPost body = fw.getBody(req, CredencialesIn.CredencialesPost.class);
         if (body == null || body.esInValido()) {
             fw.sendBadRequestJSON(resp, body);
             return;
@@ -115,12 +118,37 @@ public class CredencialesCtrl extends HttpServlet {
             if (usuario != null) {
                 response.put("token", usuario.getToken());
                 response.put("correo", usuario.getCorreo());
-                response.put("telefono", usuario.getTelefono());
                 response.put("nombre", usuario.getNombre());
                 response.put("apellido", usuario.getApellido());
             } else {
                 response.put("token", null);
             }
+        } catch (Exception throwables) {
+            throwables.printStackTrace();
+            resp.setStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+            if (Env.AUTH_ENVIRONMENT.equals("DEBUG")) response.put("error", throwables.getMessage());
+        }
+
+        fw.sendJSON(resp, response);
+    }
+
+
+    @RequestMapping(
+            value = "/v1/logout",
+            method = RequestMethod.DELETE
+    )
+    public void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        DecodedJWT decodedJWT = seguridadService.verificarAutorizacion(req, Permiso.ABIERTO, PermisoAlcance.ABIERTO);
+        if (decodedJWT == null) {
+            fw.sendForbiddenTEXT(resp);
+            return;
+        }
+
+        HashMap<String, Object> response = new HashMap<>();
+        try {
+            credencialesFlujo.eliminarToken(
+                    decodedJWT.getClaim("uuid").asString()
+            );
         } catch (Exception throwables) {
             throwables.printStackTrace();
             resp.setStatus(StatusCodes.INTERNAL_SERVER_ERROR);

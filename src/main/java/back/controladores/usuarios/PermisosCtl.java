@@ -10,21 +10,16 @@ import back.utiles.FrameworkService;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.undertow.util.StatusCodes;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Optional;
 
 
-@Component
+@RestController
 public class PermisosCtl {
     private final FrameworkService fw;
     private final SeguridadService seguridadService;
@@ -45,7 +40,7 @@ public class PermisosCtl {
             value = "/v1/permisos",
             method = RequestMethod.GET
     )
-    public void doGet(HttpServletRequest req, HttpServletResponse resp, @RequestParam Optional<Integer> id) throws IOException {
+    public void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         DecodedJWT decodedJWT = seguridadService.verificarAutorizacion(req, Permiso.ADMIN_PERMISOS, PermisoAlcance.VISUALIZAR);
         if (decodedJWT == null) {
             fw.sendForbiddenTEXT(resp);
@@ -65,10 +60,34 @@ public class PermisosCtl {
         fw.sendJSON(resp, response);
     }
 
+    @RequestMapping(
+            value = "/v1/permisos_usuario",
+            method = RequestMethod.GET
+    )
+    public void doGetPU(HttpServletRequest req, HttpServletResponse resp, @RequestParam int id) throws IOException {
+        DecodedJWT decodedJWT = seguridadService.verificarAutorizacion(req, Permiso.ADMIN_PERMISOS, PermisoAlcance.VISUALIZAR);
+        if (decodedJWT == null) {
+            fw.sendForbiddenTEXT(resp);
+            return;
+        }
+
+        HashMap<String, Object> response = new HashMap<>(1);
+        try {
+            ArrayList<HashMap<String, Object>> permisos = permisosFlujo.obtenerPermisosUsuario(id);
+            response.put("permisos", permisos);
+        } catch (Exception throwables) {
+            throwables.printStackTrace();
+            resp.setStatus(StatusCodes.INTERNAL_SERVER_ERROR);
+            if (Env.AUTH_ENVIRONMENT.equals("DEBUG")) response.put("error", throwables.getMessage());
+        }
+
+        fw.sendJSON(resp, response);
+    }
+
 
     @CrossOrigin
     @RequestMapping(
-            value = "/v1/usuarios",
+            value = "/v1/permiso",
             method = RequestMethod.POST,
             consumes = "application/json"
     )
@@ -90,7 +109,8 @@ public class PermisosCtl {
             int success = permisosFlujo.asignar(
                     body.getUsuario_id(),
                     body.getPermiso_id(),
-                    body.getAlcance()
+                    body.getAlcance(),
+                    decodedJWT.getClaim("uuid").asString()
             );
             response.put("success", success);
         } catch (Exception throwables) {
@@ -105,7 +125,7 @@ public class PermisosCtl {
 
     @CrossOrigin
     @RequestMapping(
-            value = "/v1/permisos",
+            value = "/v1/permiso",
             method = RequestMethod.DELETE
     )
     public void doDelete(

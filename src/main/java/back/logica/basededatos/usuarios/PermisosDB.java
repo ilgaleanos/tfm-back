@@ -16,8 +16,13 @@ public class PermisosDB extends DBCoreService {
         return obtenerElementos(SP_PERMISOS_SELECT, new Object[]{});
     }
 
-    public int asignar(int usuario_id, int permiso_id, int alcance) throws SQLException {
-        Object[] parametros = new Object[]{usuario_id, permiso_id, alcance};
+    public ArrayList<HashMap<String, Object>> obtenerPermisosUsuario(int id) throws SQLException {
+        Object[] parametros = new Object[]{id};
+        return obtenerElementos(SP_PERMISOS_SELECT_USUARIO, parametros);
+    }
+
+    public int asignar(int usuario_id, int permiso_id, int alcance, String uuid) throws SQLException {
+        Object[] parametros = new Object[]{usuario_id, permiso_id, alcance, uuid};
         return ejecutarQuery(SP_PERMISOS_UPSERT, parametros);
     }
 

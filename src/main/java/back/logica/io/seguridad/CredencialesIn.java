@@ -16,7 +16,7 @@ public class CredencialesIn {
      *================================================================================================================*/
 
     @CompiledJson
-    public static class GenerarOTP {
+    public static class CredencialesGenerarOTP {
 
         @JsonAttribute(ignore = true)
         private static final Pattern VALID_EMAIL_ADDRESS_REGEX =
@@ -30,7 +30,7 @@ public class CredencialesIn {
 
 
         // requerido para serialización
-        public GenerarOTP() {
+        public CredencialesGenerarOTP() {
         }
 
 
@@ -77,18 +77,18 @@ public class CredencialesIn {
 
 
     /*==================================================================================================================
-     * GenerarToken
+     * POST
      *================================================================================================================*/
 
     @CompiledJson
-    public static class GenerarToken {
+    public static class CredencialesPost {
 
         private String uuid;
         private String otp;
         private String captcha;
 
         // requerido para serialización
-        public GenerarToken() {
+        public CredencialesPost() {
         }
 
 

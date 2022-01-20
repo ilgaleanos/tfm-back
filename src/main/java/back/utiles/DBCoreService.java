@@ -44,7 +44,7 @@ public class DBCoreService {
                 Connection connection = MySqlCP.getDB().getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         query,
-                        ResultSet.TYPE_FORWARD_ONLY,
+                        ResultSet.TYPE_SCROLL_INSENSITIVE,
                         ResultSet.CONCUR_READ_ONLY
                 )
         ) {
@@ -99,7 +99,7 @@ public class DBCoreService {
                 Connection connection = MySqlCP.getDB().getConnection();
                 PreparedStatement statement = connection.prepareStatement(
                         query,
-                        ResultSet.TYPE_FORWARD_ONLY,
+                        ResultSet.TYPE_SCROLL_INSENSITIVE,
                         ResultSet.CONCUR_READ_ONLY
                 )
         ) {

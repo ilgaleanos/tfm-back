@@ -4,14 +4,14 @@ import back.logica.basededatos.iam.SesionDB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 
-@Component
+@Service
 public class SesionFlujo {
 
     private final static Logger logger = LoggerFactory.getLogger(SesionFlujo.class);
@@ -24,7 +24,7 @@ public class SesionFlujo {
         this.sesionDB = sesionDB;
     }
 
-    public ArrayList<HashMap<String, Object>> obtenerPermisos(String uuid) throws SQLException {
-        return sesionDB.obtenerPermisos(uuid);
+    public ArrayList<HashMap<String, Object>> obtenerPermisos(int plataforma_id, String uuid) throws SQLException {
+        return sesionDB.obtenerPermisos(plataforma_id, uuid);
     }
 }

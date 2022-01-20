@@ -1,10 +1,19 @@
 package back.logica.io.usuarios;
 
 import com.dslplatform.json.CompiledJson;
+import com.dslplatform.json.JsonAttribute;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Component
 public class UsuariosIn {
+
+    @JsonAttribute(ignore = true)
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     /*==================================================================================================================
      * POST
@@ -16,21 +25,22 @@ public class UsuariosIn {
         private String correo;
         private String nombre;
         private String apellido;
-        private String telefono;
-        private String documento;
-        private int documento_tipo;
 
         // requerido para serialización
         public POST() {
         }
 
         public boolean esInValido() {
-            return correo == null || correo.isEmpty()
-                    || nombre == null || nombre.isEmpty()
-                    || apellido == null || apellido.isEmpty()
-                    || telefono == null || telefono.isEmpty()
-                    || documento == null || documento.isEmpty()
-                    || documento_tipo == 0;
+            if (
+                    correo == null || correo.isEmpty()
+                            || nombre == null || nombre.isEmpty()
+                            || apellido == null || apellido.isEmpty()
+            ) {
+                return true;
+            }
+
+            Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(correo);
+            return !matcher.find();
         }
 
         public String getCorreo() {
@@ -38,7 +48,8 @@ public class UsuariosIn {
         }
 
         public void setCorreo(String correo) {
-            this.correo = correo;
+            Objects.requireNonNull(correo);
+            this.correo = correo.toLowerCase();
         }
 
         public String getNombre() {
@@ -55,30 +66,6 @@ public class UsuariosIn {
 
         public void setApellido(String apellido) {
             this.apellido = apellido;
-        }
-
-        public String getTelefono() {
-            return telefono;
-        }
-
-        public void setTelefono(String telefono) {
-            this.telefono = telefono;
-        }
-
-        public String getDocumento() {
-            return documento;
-        }
-
-        public void setDocumento(String documento) {
-            this.documento = documento;
-        }
-
-        public int getDocumento_tipo() {
-            return documento_tipo;
-        }
-
-        public void setDocumento_tipo(int documento_tipo) {
-            this.documento_tipo = documento_tipo;
         }
     }
 
@@ -93,9 +80,6 @@ public class UsuariosIn {
         private String correo;
         private String nombre;
         private String apellido;
-        private String telefono;
-        private String documento;
-        private int documento_tipo;
         private int id;
 
         // requerido para serialización
@@ -103,12 +87,17 @@ public class UsuariosIn {
         }
 
         public boolean esInValido() {
-            return correo == null || correo.isEmpty()
-                    || nombre == null || nombre.isEmpty()
-                    || apellido == null || apellido.isEmpty()
-                    || telefono == null || telefono.isEmpty()
-                    || documento == null || documento.isEmpty()
-                    || documento_tipo == 0 || id == 0;
+            if (
+                    correo == null || correo.isEmpty()
+                            || nombre == null || nombre.isEmpty()
+                            || apellido == null || apellido.isEmpty()
+                            || id == 0
+            ) {
+                return true;
+            }
+
+            Matcher matcher = VALID_EMAIL_ADDRESS_REGEX.matcher(correo);
+            return !matcher.find();
         }
 
         public String getCorreo() {
@@ -116,7 +105,8 @@ public class UsuariosIn {
         }
 
         public void setCorreo(String correo) {
-            this.correo = correo;
+            Objects.requireNonNull(correo);
+            this.correo = correo.toLowerCase();
         }
 
         public String getNombre() {
@@ -133,30 +123,6 @@ public class UsuariosIn {
 
         public void setApellido(String apellido) {
             this.apellido = apellido;
-        }
-
-        public String getTelefono() {
-            return telefono;
-        }
-
-        public void setTelefono(String telefono) {
-            this.telefono = telefono;
-        }
-
-        public String getDocumento() {
-            return documento;
-        }
-
-        public void setDocumento(String documento) {
-            this.documento = documento;
-        }
-
-        public int getDocumento_tipo() {
-            return documento_tipo;
-        }
-
-        public void setDocumento_tipo(int documento_tipo) {
-            this.documento_tipo = documento_tipo;
         }
 
         public int getId() {

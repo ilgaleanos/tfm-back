@@ -26,8 +26,12 @@ public class PermisosFlujo {
         return permisosDB.obtenerPermisos();
     }
 
-    public int asignar(int usuario_id, int permiso_id, int alcance) throws SQLException {
-        return permisosDB.asignar(usuario_id, permiso_id, alcance);
+    public ArrayList<HashMap<String, Object>> obtenerPermisosUsuario(int id) throws SQLException {
+        return permisosDB.obtenerPermisosUsuario(id);
+    }
+
+    public int asignar(int usuario_id, int permiso_id, int alcance, String uuid) throws SQLException {
+        return permisosDB.asignar(usuario_id, permiso_id, alcance, uuid);
     }
 
     public int eliminar(int usuario_id, int permiso_id) throws SQLException {
