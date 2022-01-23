@@ -94,7 +94,7 @@ public class CredencialesIn {
 
         public boolean esInValido() {
             return uuid == null || uuid.isEmpty()
-                    || otp == null || otp.length() != 7
+                    || otp == null || otp.length() != 6
                     || captcha == null || captcha.isEmpty();
         }
 

@@ -2,7 +2,7 @@ package back.controladores.usuarios;
 
 import back.logica.entidades.Permiso;
 import back.logica.entidades.PermisoAlcance;
-import back.logica.flujos.seguridad.SeguridadService;
+import back.utiles.SeguridadService;
 import back.logica.flujos.usuarios.UsuariosFlujo;
 import back.logica.io.usuarios.UsuariosIn;
 import back.utiles.Env;

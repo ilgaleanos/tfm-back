@@ -24,7 +24,7 @@ public class SesionFlujo {
         this.sesionDB = sesionDB;
     }
 
-    public ArrayList<HashMap<String, Object>> obtenerPermisos(int plataforma_id, String uuid) throws SQLException {
-        return sesionDB.obtenerPermisos(plataforma_id, uuid);
+    public ArrayList<HashMap<String, Object>> obtenerPermisos(String uuid) throws SQLException {
+        return sesionDB.obtenerPermisos(uuid);
     }
 }

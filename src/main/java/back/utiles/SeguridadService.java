@@ -14,13 +14,12 @@
  * limitations under the License.
  */
 
-package back.logica.flujos.seguridad;
+package back.utiles;
 
 import back.logica.basededatos.seguridad.SeguridadDB;
 import back.logica.entidades.Permiso;
 import back.logica.entidades.PermisoAlcance;
 import back.logica.entidades.Usuario;
-import back.utiles.Env;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -28,6 +27,8 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.Cookie;
@@ -114,11 +115,12 @@ public class SeguridadService {
     /**
      * Generador de Token de Session basado en cookie
      *
+     * @param resp    : respuesta de la petición donde se fijara la cookie
      * @param usuario : identificador único de cada usuario
-     * @param unidad  :  estructura con los datos para la generacion del token
+     * @param unidad  : estructura con los datos para la generacion del token
      * @return String Token generado y cookie fijada
      */
-    public String generarToken(Usuario usuario, int unidad) throws SQLException {
+    public String generarToken(HttpServletResponse resp, Usuario usuario, int unidad) throws SQLException {
         if (!leidas) readKeys();
 
         String token = contruirToken(
@@ -126,6 +128,17 @@ public class SeguridadService {
                 usuario.getVida_horas(),
                 unidad
         );
+
+        if (!token.isEmpty()) {
+            ResponseCookie cookie = ResponseCookie.from(AUTH, token)
+                    .path("/")
+                    .maxAge(3600L * usuario.getVida_horas())
+                    .secure(Env.AUTH_COOKIE_SECURE)
+                    .httpOnly(Env.AUTH_COOKIE_HTTP_ONLY)
+                    .sameSite("Strict")
+                    .build();
+            resp.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        }
 
         sdb.fijarToken(usuario);
         return token;
@@ -171,11 +184,6 @@ public class SeguridadService {
             DecodedJWT tokenDecoded = verifier.verify(token);
 
             if (tokenDecoded != null) {
-
-                if (permiso.equals(Permiso.ABIERTO) && alcance.equals(PermisoAlcance.ABIERTO)) {
-                    return tokenDecoded;
-                }
-
                 if (sdb.existeToken(tokenDecoded.getClaim("uuid").asString(), permiso, alcance) == 1) {
                     return tokenDecoded;
                 }
@@ -205,23 +213,23 @@ public class SeguridadService {
     /**
      * Eliminamos el token tanto de la base como de la cookie, el token queda inválido
      *
-     * @param req:  petición del usuario
-     * @param resp: respuesta al usuario
+     * @param req  : petición del usuario
+     * @param resp : respuesta al usuario
+     * @return
      */
-    public void eliminarSesion(HttpServletRequest req, HttpServletResponse resp) {
-        final String token = this.obtenerTokenDeCabeceras(req);
-        if (token == null || token.isEmpty()) {
-            return;
-        }
-
+    public int eliminarSesion(HttpServletRequest req, HttpServletResponse resp) {
         try {
+            String token = obtenerTokenDeCabeceras(req);
             DecodedJWT decodedJWT = new JWT().decodeJwt(token);
             String uuid = decodedJWT.getClaim("uuid").asString();
+            this.eliminarCookie(resp);
 
             if (uuid != null && !uuid.isEmpty()) {
                 sdb.borrarToken(uuid);
             }
-        } catch (Exception ignored) {
+            return 1;
+        } catch (Exception err) {
+            return 0;
         }
     }
 
@@ -257,5 +265,22 @@ public class SeguridadService {
             e.printStackTrace();
         }
         return generatedOTP.toString();
+    }
+
+
+    /**
+     * Eliminamos la cookie del usuario que envía la petición
+     *
+     * @param resp respuesta que entregaremos al usuario
+     */
+    public void eliminarCookie(HttpServletResponse resp) {
+        ResponseCookie cookie = ResponseCookie.from(AUTH, "")
+                .path("/")
+                .maxAge(0)
+                .secure(Env.AUTH_COOKIE_SECURE)
+                .httpOnly(Env.AUTH_COOKIE_HTTP_ONLY)
+                .sameSite("Strict")
+                .build();
+        resp.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
 }

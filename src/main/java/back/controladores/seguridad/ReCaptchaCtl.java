@@ -1,6 +1,6 @@
 package back.controladores.seguridad;
 
-import back.logica.flujos.seguridad.Captcha;
+import back.utiles.Captcha;
 import back.utiles.Env;
 import back.utiles.FrameworkService;
 import io.undertow.util.StatusCodes;

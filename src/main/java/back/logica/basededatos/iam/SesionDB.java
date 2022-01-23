@@ -13,8 +13,8 @@ import static back.logica.basededatos.iam.Consultas.SP_PERMISOS_SELECT_PROPIOS;
 @Service
 public class SesionDB extends DBCoreService {
 
-    public ArrayList<HashMap<String, Object>> obtenerPermisos(int plataforma_id, String uuid) throws SQLException {
-        Object[] parametros = new Object[]{plataforma_id, uuid};
+    public ArrayList<HashMap<String, Object>> obtenerPermisos(String uuid) throws SQLException {
+        Object[] parametros = new Object[]{uuid};
         return obtenerElementos(SP_PERMISOS_SELECT_PROPIOS, parametros);
     }
 }

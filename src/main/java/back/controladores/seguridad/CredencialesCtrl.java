@@ -19,10 +19,10 @@ import back.logica.entidades.Permiso;
 import back.logica.entidades.PermisoAlcance;
 import back.logica.entidades.Usuario;
 import back.logica.flujos.seguridad.CredencialesFlujo;
-import back.logica.flujos.seguridad.SeguridadService;
 import back.logica.io.seguridad.CredencialesIn;
 import back.utiles.Env;
 import back.utiles.FrameworkService;
+import back.utiles.SeguridadService;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import io.undertow.util.StatusCodes;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +41,7 @@ import java.util.HashMap;
 /**
  *
  */
+@CrossOrigin
 @RestController
 public class CredencialesCtrl extends HttpServlet {
 
@@ -110,13 +111,13 @@ public class CredencialesCtrl extends HttpServlet {
         HashMap<String, Object> response = new HashMap<>(4);
         try {
             Usuario usuario = credencialesFlujo.ingresar(
+                    resp,
                     body.getUuid(),
                     body.getOtp(),
                     body.getCaptcha()
             );
 
             if (usuario != null) {
-                response.put("token", usuario.getToken());
                 response.put("correo", usuario.getCorreo());
                 response.put("nombre", usuario.getNombre());
                 response.put("apellido", usuario.getApellido());
@@ -132,23 +133,16 @@ public class CredencialesCtrl extends HttpServlet {
         fw.sendJSON(resp, response);
     }
 
-
+    @CrossOrigin
     @RequestMapping(
             value = "/v1/logout",
             method = RequestMethod.DELETE
     )
     public void doDelete(HttpServletRequest req, HttpServletResponse resp) throws IOException {
-        DecodedJWT decodedJWT = seguridadService.verificarAutorizacion(req, Permiso.ABIERTO, PermisoAlcance.ABIERTO);
-        if (decodedJWT == null) {
-            fw.sendForbiddenTEXT(resp);
-            return;
-        }
-
         HashMap<String, Object> response = new HashMap<>();
         try {
-            credencialesFlujo.eliminarToken(
-                    decodedJWT.getClaim("uuid").asString()
-            );
+            int success = credencialesFlujo.eliminarToken(req, resp);
+            response.put("success", success == 1);
         } catch (Exception throwables) {
             throwables.printStackTrace();
             resp.setStatus(StatusCodes.INTERNAL_SERVER_ERROR);

@@ -2,11 +2,15 @@ package back.logica.flujos.seguridad;
 
 import back.logica.basededatos.seguridad.CredencialesDB;
 import back.logica.entidades.Usuario;
+import back.utiles.Captcha;
+import back.utiles.SeguridadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import java.util.Calendar;
 import java.util.UUID;
@@ -39,21 +43,16 @@ public class CredencialesFlujo {
      * @return token generado o nulo en caso de fallo de autenticación
      */
     public String generarOTP(String telefono, String correo, String captcha) throws SQLException {
-        if (recaptcha.verificarInvalido(captcha, 0.7)) {
+        if (recaptcha.verificarInvalido(captcha, 0.9)) {
             return null;
         }
-        String otp = seguridadService.generateOTPSeguro(7);
+        String otp = seguridadService.generateOTPSeguro(6);
         String uuid = UUID.randomUUID().toString();
         int esCorreo = credencialesDB.insertarOtpUsuario(telefono, correo, uuid, otp);
         if (esCorreo == 999) {
             return null;
         }
 
-        if (esCorreo == 1) {
-            // TODO: enviar por el correo
-        } else {
-            // TODO: enviar por el telefono
-        }
         logger.info("UUID: " + uuid + " OTP: " + otp);
         return uuid;
     }
@@ -62,13 +61,15 @@ public class CredencialesFlujo {
     /**
      * Método para validar el ingreso de un usuario
      *
-     * @param uuid:    campo por el cual se buscara en la base de datos
-     * @param otp:     otp a validar
-     * @param captcha: cadena para verificar si es una petición válida
+     *
+     * @param resp
+     * @param uuid :    campo por el cual se buscara en la base de datos
+     * @param otp :     otp a validar
+     * @param captcha : cadena para verificar si es una petición válida
      * @return token generado o nulo en caso de fallo de autenticación
      */
-    public Usuario ingresar(String uuid, String otp, String captcha) throws SQLException {
-        if (recaptcha.verificarInvalido(captcha, 0.7)) {
+    public Usuario ingresar(HttpServletResponse resp, String uuid, String otp, String captcha) throws SQLException {
+        if (recaptcha.verificarInvalido(captcha, 0.9)) {
             return null;
         }
 
@@ -78,13 +79,13 @@ public class CredencialesFlujo {
         }
 
         usuario.setUuid(UUID.randomUUID().toString());
-        usuario.setToken(seguridadService.generarToken(usuario, Calendar.HOUR));
+        usuario.setToken(seguridadService.generarToken(resp, usuario, Calendar.HOUR));
 
         return usuario;
     }
 
 
-    public int eliminarToken(String uuid) throws SQLException {
-        return credencialesDB.eliminarToken(uuid);
+    public int eliminarToken(HttpServletRequest req, HttpServletResponse resp)  {
+        return seguridadService.eliminarSesion(req, resp);
     }
 }
