@@ -53,7 +53,7 @@ public class CorreoSMTPService {
             msg.addHeader("format", "flowed");
             msg.addHeader("Content-Transfer-Encoding", "8bit");
 
-            msg.setFrom(new InternetAddress(Env.AUTH_SMTP_USUARIO, "Familia Franciscana"));
+            msg.setFrom(new InternetAddress(Env.AUTH_SMTP_USUARIO, "Sun Eyes"));
             msg.setSubject(asunto, "UTF-8");
             msg.setContent(cuerpo, "text/html; charset=UTF-8");
             msg.setSentDate(new Date());

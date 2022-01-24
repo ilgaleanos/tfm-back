@@ -74,7 +74,7 @@ test {
 
 jib {
     from.image = 'adoptopenjdk/openjdk15:alpine-jre'
-    to.image = 'gcr.io/tfm/back:20220118'
+    to.image = 'gcr.io/unir-tfm-007/back:20220123'
 
     container.jvmFlags = ['-XX:+TieredCompilation', '-XX:TieredStopAtLevel=1', '-Xss256k']
 
