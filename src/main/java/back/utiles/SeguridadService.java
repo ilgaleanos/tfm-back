@@ -135,7 +135,7 @@ public class SeguridadService {
                     .maxAge(3600L * usuario.getVida_horas())
                     .secure(Env.AUTH_COOKIE_SECURE)
                     .httpOnly(Env.AUTH_COOKIE_HTTP_ONLY)
-                    .sameSite("Strict")
+                    .sameSite("Lax")
                     .build();
             resp.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         }
@@ -279,7 +279,7 @@ public class SeguridadService {
                 .maxAge(0)
                 .secure(Env.AUTH_COOKIE_SECURE)
                 .httpOnly(Env.AUTH_COOKIE_HTTP_ONLY)
-                .sameSite("Strict")
+                .sameSite("Lax")
                 .build();
         resp.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
     }
