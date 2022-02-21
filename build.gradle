@@ -20,7 +20,7 @@ dependencies {
     implementation group: 'javax.servlet', name: 'jstl', version: '1.2'
 
     // SPRING
-    implementation('org.springframework.boot:spring-boot-starter-web:2.6.2') {
+    implementation('org.springframework.boot:spring-boot-starter-web:2.6.3') {
         exclude module: "spring-boot-starter-tomcat"
     }
     // https://mvnrepository.com/artifact/org.springframework/spring-web
@@ -33,7 +33,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter:2.6.1'
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test
-    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.2'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test:2.6.3'
 
     // MIS DEPENDENCIAS
 
@@ -74,7 +74,7 @@ test {
 
 jib {
     from.image = 'adoptopenjdk/openjdk15:alpine-jre'
-    to.image = 'gcr.io/unir-tfm-007/back:20220123'
+    to.image = 'gcr.io/unir-tfm-007/back:20220220'
 
     container.jvmFlags = ['-XX:+TieredCompilation', '-XX:TieredStopAtLevel=1', '-Xss256k']
 

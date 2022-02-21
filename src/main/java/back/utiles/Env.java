@@ -48,6 +48,9 @@ public class Env {
     public static final String AUTH_SMTP_USUARIO = System.getenv("AUTH_SMTP_USUARIO");
     public static final String AUTH_SMTP_CLAVE = System.getenv("AUTH_SMTP_CLAVE");
 
+    // API_KEY modelos
+    public static final String AUTH_API_KEY = System.getenv("AUTH_API_KEY");
+
     // POSTGRESQL
     public static final int AUTH_MYSQL_CONNECTIONS = 3;
     static final String AUTH_MYSQL_CLOUD_SQL_CONNECTION_NAME = System.getenv("AUTH_MYSQL_CLOUD_SQL_CONNECTION_NAME");

@@ -23,7 +23,9 @@ package back.logica.entidades;
 public enum Permiso {
     ABIERTO(0),
     ADMIN_PERMISOS(1),
-    ADMIN_USUARIOS(2);
+    ADMIN_USUARIOS(2),
+    DASHBOAR(3),
+    PREDICTORES(4);
 
     private final int id;
 
